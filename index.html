@@ -3,116 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Morning Routine App</title>
+    <title>Morning Flow</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --bg-color: #f5f5f7;
+            --card-bg: #ffffff;
+            --text-color: #1d1d1f;
+            --accent-color: #0071e3;
+            --success-color: #34c759;
+        }
+        body, html {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
         }
-        .card {
-            background-color: white;
-            border-radius: 8px;
+        #app {
+            display: flex;
+            flex-direction: column;
+            max-width: 800px;
+            width: 90%;
+            height: 90vh;
+            background-color: var(--card-bg);
+            border-radius: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin: 10px;
-            text-align: center;
+            overflow: hidden;
+        }
+        #cardContainer {
+            flex: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
             position: relative;
         }
-        .hidden {
-            display: none;
+        #todoList {
+            padding: 20px;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        #flashMessage {
-            position: fixed;
+        .card {
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 48px;
-            font-weight: bold;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            display: none;
+            width: 100%;
+            pointer-events: none;
+        }
+        .card.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 30px;
         }
         button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-        #dieResult {
-            font-size: 72px;
-            font-weight: bold;
-            margin: 20px 0;
+        button:hover {
+            background-color: #0077ED;
         }
         #homeButton {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 20px;
+            right: 20px;
             font-size: 24px;
             cursor: pointer;
             background: none;
             border: none;
             padding: 5px;
         }
+        #dieResult {
+            font-size: 72px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        .todo-item {
+            display: flex;
+            align-items: center;
+            margin: 0 10px 10px 0;
+            font-size: 14px;
+            opacity: 0.6;
+            background-color: var(--card-bg);
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        .todo-item.completed {
+            text-decoration: line-through;
+            opacity: 1;
+        }
+        .todo-item::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--accent-color);
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .todo-item.completed::before {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+        #confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
     <div id="app">
-        <div id="card1" class="card">
-            <h2>7:11 AM</h2>
-            <h3>Make yourself breakfast</h3>
-            <button onclick="nextCard()">Next</button>
+        <div id="cardContainer">
             <button id="homeButton" onclick="resetToHome()">🏠</button>
+            <div id="card1" class="card active">
+                <h2>7:11 AM</h2>
+                <h3>Fuel Your Day</h3>
+                <p>Prepare a nourishing breakfast to kickstart your morning.</p>
+                <button onclick="nextCard()">I'm Ready</button>
+            </div>
+            <div id="card2" class="card">
+                <h2>Mindful Eating</h2>
+                <h3>Savor the Moment</h3>
+                <p>Enjoy your meal with less than 3 communicative breaks.</p>
+                <button onclick="nextCard()">Done</button>
+            </div>
+            <div id="card3" class="card">
+                <h2>7:52 AM</h2>
+                <h3>Roll for Routine</h3>
+                <div id="dieResult"></div>
+                <button onclick="rollDie()">Roll</button>
+            </div>
+            <div id="card4" class="card">
+                <h2>Daily Wellness</h2>
+                <h3>Take Your Supplement</h3>
+                <p>Did you remember to swallow your pill?</p>
+                <button onclick="nextCard()">Taken</button>
+            </div>
+            <div id="card5" class="card">
+                <h2>Fresh Start</h2>
+                <h3>Brush for Success</h3>
+                <p>A clean smile sets the tone for a great day.</p>
+                <button onclick="nextCard()">Brushed</button>
+            </div>
+            <div id="card6" class="card">
+                <h2>Dress to Impress</h2>
+                <h3>Outfit Check</h3>
+                <p>Choose clothes that make you feel confident.</p>
+                <button onclick="nextCard()">Dressed</button>
+            </div>
+            <div id="card7" class="card">
+                <h2>Ready to Go</h2>
+                <h3>Shoe Check</h3>
+                <p>Are your shoes placed next to the entrance?</p>
+                <button onclick="completeRoutine()">All Set</button>
+            </div>
+            <div id="card8" class="card">
+                <h2>Congratulations!</h2>
+                <h3>You're Ready to Conquer</h3>
+                <p>You've completed your morning routine. Have a great day!</p>
+                <button onclick="resetToHome()">Start Over</button>
+            </div>
         </div>
-        <div id="card2" class="card hidden">
-            <h2>Roll the Die</h2>
-            <div id="dieResult"></div>
-            <button onclick="rollDie()">Roll</button>
-            <button id="homeButton" onclick="resetToHome()">🏠</button>
-        </div>
-        <div id="card3" class="card hidden">
-            <h2>Did you swallow?</h2>
-            <button onclick="nextCard()">Yes</button>
-            <button id="homeButton" onclick="resetToHome()">🏠</button>
-        </div>
-        <div id="card4" class="card hidden">
-            <h2>Did you brush?</h2>
-            <button onclick="nextCard()">Yes</button>
-            <button id="homeButton" onclick="resetToHome()">🏠</button>
-        </div>
-        <div id="card5" class="card hidden">
-            <h2>Did you dress?</h2>
-            <button onclick="nextCard()">Yes</button>
-            <button id="homeButton" onclick="resetToHome()">🏠</button>
-        </div>
-        <div id="card6" class="card hidden">
-            <h2>Are your shoes next to the entrance?</h2>
-            <button onclick="nextCard()">Yes</button>
-            <button id="homeButton" onclick="resetToHome()">🏠</button>
-        </div>
+        <div id="todoList"></div>
     </div>
-    <div id="flashMessage"></div>
-
+    <canvas id="confetti"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         let currentCard = 1;
-        const totalCards = 6;
+        const totalCards = 8;
+        const todoItems = [
+            "Prepare breakfast",
+            "Eat mindfully",
+            "Roll the die",
+            "Take supplement",
+            "Brush teeth",
+            "Get dressed",
+            "Check shoes"
+        ];
 
         function nextCard() {
-            document.getElementById(`card${currentCard}`).classList.add('hidden');
-            currentCard = currentCard % totalCards + 1;
-            document.getElementById(`card${currentCard}`).classList.remove('hidden');
+            document.querySelector('.card.active').classList.remove('active');
+            currentCard++;
+            document.getElementById(`card${currentCard}`).classList.add('active');
+            updateTodoList();
         }
 
         function resetToHome() {
-            document.getElementById(`card${currentCard}`).classList.add('hidden');
+            document.querySelector('.card.active').classList.remove('active');
             currentCard = 1;
-            document.getElementById('card1').classList.remove('hidden');
+            document.getElementById('card1').classList.add('active');
+            updateTodoList(true);
         }
 
         function rollDie() {
@@ -126,52 +235,52 @@
                     const finalResult = Math.floor(Math.random() * 6) + 1;
                     dieResult.textContent = finalResult;
                     setTimeout(() => {
+                        let message;
                         switch (finalResult) {
                             case 1:
                             case 3:
                             case 5:
                             case 6:
-                                flashMessage("Take yourself");
+                                message = "Take yourself";
                                 break;
                             case 2:
-                                flashMessage("Chia");
+                                message = "Chia";
                                 break;
                             case 4:
-                                flashMessage("Yoske");
+                                message = "Yoske";
                                 break;
                         }
-                        setTimeout(nextCard, 2000);
+                        alert(message);
+                        setTimeout(nextCard, 1000);
                     }, 500);
                 }
             }, 50);
         }
 
-        function flashMessage(message) {
-            const flashElement = document.getElementById('flashMessage');
-            flashElement.textContent = message;
-            flashElement.style.display = 'block';
-            setTimeout(() => {
-                flashElement.style.display = 'none';
-            }, 2000);
+        function updateTodoList(reset = false) {
+            const todoListElement = document.getElementById('todoList');
+            todoListElement.innerHTML = '';
+            todoItems.forEach((item, index) => {
+                const todoItem = document.createElement('div');
+                todoItem.classList.add('todo-item');
+                todoItem.textContent = item;
+                if (!reset && index < currentCard - 1) {
+                    todoItem.classList.add('completed');
+                }
+                todoListElement.appendChild(todoItem);
+            });
         }
 
-        // For testing purposes, we'll show the first card immediately
-        document.getElementById('card1').classList.remove('hidden');
-
-        // Uncomment the following function call if you want to schedule the first card at 7:11 AM
-        // scheduleFirstCard();
-
-        function scheduleFirstCard() {
-            const now = new Date();
-            const targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 11, 0, 0);
-            if (now > targetTime) {
-                targetTime.setDate(targetTime.getDate() + 1);
-            }
-            const timeUntilTarget = targetTime - now;
-            setTimeout(() => {
-                document.getElementById('card1').classList.remove('hidden');
-            }, timeUntilTarget);
+        function completeRoutine() {
+            nextCard();
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
         }
+
+        updateTodoList();
     </script>
 </body>
 </html>
