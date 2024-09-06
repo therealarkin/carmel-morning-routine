@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morning Routine App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+            position: relative;
+        }
+        .hidden {
+            display: none;
+        }
+        #flashMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #dieResult {
+            font-size: 72px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        #homeButton {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="card1" class="card">
+            <h2>7:11 AM</h2>
+            <h3>Make yourself breakfast</h3>
+            <button onclick="nextCard()">Next</button>
+            <button id="homeButton" onclick="resetToHome()">🏠</button>
+        </div>
+        <div id="card2" class="card hidden">
+            <h2>Roll the Die</h2>
+            <div id="dieResult"></div>
+            <button onclick="rollDie()">Roll</button>
+            <button id="homeButton" onclick="resetToHome()">🏠</button>
+        </div>
+        <div id="card3" class="card hidden">
+            <h2>Did you swallow?</h2>
+            <button onclick="nextCard()">Yes</button>
+            <button id="homeButton" onclick="resetToHome()">🏠</button>
+        </div>
+        <div id="card4" class="card hidden">
+            <h2>Did you brush?</h2>
+            <button onclick="nextCard()">Yes</button>
+            <button id="homeButton" onclick="resetToHome()">🏠</button>
+        </div>
+        <div id="card5" class="card hidden">
+            <h2>Did you dress?</h2>
+            <button onclick="nextCard()">Yes</button>
+            <button id="homeButton" onclick="resetToHome()">🏠</button>
+        </div>
+        <div id="card6" class="card hidden">
+            <h2>Are your shoes next to the entrance?</h2>
+            <button onclick="nextCard()">Yes</button>
+            <button id="homeButton" onclick="resetToHome()">🏠</button>
+        </div>
+    </div>
+    <div id="flashMessage"></div>
+
+    <script>
+        let currentCard = 1;
+        const totalCards = 6;
+
+        function nextCard() {
+            document.getElementById(`card${currentCard}`).classList.add('hidden');
+            currentCard = currentCard % totalCards + 1;
+            document.getElementById(`card${currentCard}`).classList.remove('hidden');
+        }
+
+        function resetToHome() {
+            document.getElementById(`card${currentCard}`).classList.add('hidden');
+            currentCard = 1;
+            document.getElementById('card1').classList.remove('hidden');
+        }
+
+        function rollDie() {
+            const dieResult = document.getElementById('dieResult');
+            let counter = 0;
+            const interval = setInterval(() => {
+                dieResult.textContent = Math.floor(Math.random() * 6) + 1;
+                counter++;
+                if (counter >= 20) {
+                    clearInterval(interval);
+                    const finalResult = Math.floor(Math.random() * 6) + 1;
+                    dieResult.textContent = finalResult;
+                    setTimeout(() => {
+                        switch (finalResult) {
+                            case 1:
+                            case 3:
+                            case 5:
+                            case 6:
+                                flashMessage("Take yourself");
+                                break;
+                            case 2:
+                                flashMessage("Chia");
+                                break;
+                            case 4:
+                                flashMessage("Yoske");
+                                break;
+                        }
+                        setTimeout(nextCard, 2000);
+                    }, 500);
+                }
+            }, 50);
+        }
+
+        function flashMessage(message) {
+            const flashElement = document.getElementById('flashMessage');
+            flashElement.textContent = message;
+            flashElement.style.display = 'block';
+            setTimeout(() => {
+                flashElement.style.display = 'none';
+            }, 2000);
+        }
+
+        // For testing purposes, we'll show the first card immediately
+        document.getElementById('card1').classList.remove('hidden');
+
+        // Uncomment the following function call if you want to schedule the first card at 7:11 AM
+        // scheduleFirstCard();
+
+        function scheduleFirstCard() {
+            const now = new Date();
+            const targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 7, 11, 0, 0);
+            if (now > targetTime) {
+                targetTime.setDate(targetTime.getDate() + 1);
+            }
+            const timeUntilTarget = targetTime - now;
+            setTimeout(() => {
+                document.getElementById('card1').classList.remove('hidden');
+            }, timeUntilTarget);
+        }
+    </script>
+</body>
+</html>
