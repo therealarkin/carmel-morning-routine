@@ -33,6 +33,7 @@
             border-radius: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            position: relative;
         }
         #cardContainer {
             flex: 1;
@@ -138,10 +139,19 @@
             pointer-events: none;
             z-index: 9999;
         }
+        #clock {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: 600;
+            transition: color 0.5s ease;
+        }
     </style>
 </head>
 <body>
     <div id="app">
+        <div id="clock"></div>
         <div id="cardContainer">
             <button id="homeButton" onclick="resetToHome()">🏠</button>
             <div id="card1" class="card active">
@@ -280,7 +290,32 @@
             });
         }
 
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+
+            const clock = document.getElementById('clock');
+            clock.textContent = timeString;
+
+            // Calculate color based on time
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const targetMinutes = 8 * 60; // 8:00 AM
+            const startMinutes = 7 * 60; // 7:00 AM
+            const progress = Math.max(0, Math.min(1, (currentMinutes - startMinutes) / (targetMinutes - startMinutes)));
+
+            const red = Math.floor(255 * progress);
+            const green = Math.floor(255 * (1 - progress));
+            const blue = 0;
+
+            clock.style.color = `rgb(${red}, ${green}, ${blue})`;
+        }
+
         updateTodoList();
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call to avoid delay
     </script>
 </body>
 </html>
