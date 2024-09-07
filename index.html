@@ -147,11 +147,20 @@
             font-weight: 600;
             transition: color 0.5s ease;
         }
+        #weekendIndicator {
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--accent-color);
+        }
     </style>
 </head>
 <body>
     <div id="app">
         <div id="clock"></div>
+        <div id="weekendIndicator"></div>
         <div id="cardContainer">
             <button id="homeButton" onclick="resetToHome()">🏠</button>
             <div id="card1" class="card active">
@@ -300,10 +309,14 @@
             const clock = document.getElementById('clock');
             clock.textContent = timeString;
 
-            // Calculate color based on time
+            const isWeekend = now.getDay() === 0 || now.getDay() === 6; // 0 is Sunday, 6 is Saturday
+            const weekendIndicator = document.getElementById('weekendIndicator');
+            weekendIndicator.textContent = isWeekend ? "Weekend Mode" : "Weekday Mode";
+
+            // Calculate color based on time and day of the week
             const currentMinutes = now.getHours() * 60 + now.getMinutes();
-            const targetMinutes = 8 * 60; // 8:00 AM
-            const startMinutes = 7 * 60; // 7:00 AM
+            const targetMinutes = isWeekend ? 9 * 60 : 8 * 60; // 9:00 AM on weekends, 8:00 AM on weekdays
+            const startMinutes = isWeekend ? 8 * 60 : 7 * 60; // 8:00 AM on weekends, 7:00 AM on weekdays
             const progress = Math.max(0, Math.min(1, (currentMinutes - startMinutes) / (targetMinutes - startMinutes)));
 
             const red = Math.floor(255 * progress);
